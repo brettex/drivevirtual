@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>Drive Virtual - Document Backup and Sharing</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <!--external css-->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+        
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+        <!-- js placed at the end of the document so the pages load faster -->
+        <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script src="assets/js/jquery.ui.touch-punch.min.js"></script>
+    <script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="assets/js/jquery.scrollTo.min.js"></script>
+    <script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+
+
+
+    <!--common script for all pages-->
+    <script src="assets/js/common-scripts.js"></script>
+
+    <!--script for this page-->
+    
+  <script>
+  // See if they are logged in
+  checkLogin(false);
+  </script>
+  </head>
+
+  <body>
+
+  <section id="container" >
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a href="index.html" class="logo"><b>Drive Virtual</b></a>
+            <!--logo end-->
+            <div class="nav notify-row" id="top_menu">
+            <!--<div class="btn-group">
+              <button data-toggle="dropdown" class="btn btn-theme dropdown-toggle" type="button">
+               FTP Accounts<span class="caret"></span>
+              </button>
+              <ul role="menu" class="dropdown-menu">
+              	<div id="ftp-menu">
+                    <li><a href="javascript:void(0);" class="switch" data-ftp='1'>Nickname 1</a></li>
+                    <li><a href="javascript:void(0);" class="switch" data-ftp'2'>Nickname 2</a></li>
+                </div><!-- end ftp menu -->
+                <!--<li class="divider"></li>
+                <li><a href="javascript:void(0);" id="add-ftp">Add New Account +</a></li>
+              </ul>
+            </div>
+            -->
+            </div>
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                    <li><a class="logout" href="javascript:void(0);" id="logout">Logout</a></li>
+            	</ul>
+            </div>
+        </header>
+      <!--header end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              
+              	  <p class="centered"><a href="profile.html"><img src="assets/img/ui-sam.jpg" class="img-circle" width="60"></a></p>
+              	  <h5 id="company" class="centered">Guest</h5>
+              	  	
+                  <li class="mt">
+                      <a class="active" href="folder.html">
+                          <i class="fa fa-folder"></i>
+                          <span>Folders</span>
+                      </a>
+                  </li>
+                  <li class="mt">
+                      <a href="profile.html">
+                          <i class="fa fa-user"></i>
+                          <span>Profile</span>
+                      </a>
+                  </li>
+                  
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper site-min-height">
+          	<h3><span id="ftp-title"></span> <i class="fa fa-angle-right"></i> FTP Account</h3>
+          	<div class="row mt content loading">
+            	<div class="alert alert-danger" id="download-msg" style="display:none"></div>
+            	<i class="fa fa-spin fa-spinner"></i>
+          		<div class="col-lg-12">
+          		<ul id="breadcrumb" class="clearfix">
+                	<li><i class="fa fa-folder-open"></i> Home <i class="fa fa-angle-double-right"></i></li>
+                </ul>
+                <ul id="folder-list" class="list"></ul><!-- end list -->
+          		</div>
+          	</div>
+			
+		</section><!-- wrapper -->
+      </section><!-- /MAIN CONTENT -->
+
+      <!--main content end-->
+      <!--footer start-->
+      <footer class="site-footer">
+          <div class="text-center">
+              2015 Drive Virtual &copy
+              <a href="#" class="go-top">
+                  <i class="fa fa-angle-up"></i>
+              </a>
+          </div>
+      </footer>
+      <!--footer end-->
+  </section>
+  
+
+<script>
+  
+$(document).ready(function(){
+	
+	populateCompanyName(); 
+	
+	var userID = localStorage.UserID;
+	if(localStorage.FtpID == 'null' || localStorage.FtpID == undefined){
+		localStorage.FtpID = 'default';
+	}
+	// Get the current FTP account!	
+	var ftp = localStorage.FtpID;
+	//Load Home Directory on Page Load
+	getDirectory('/', ftp);
+	getBreadcrumb('/');
+	
+	$('body').on('click', '.directory', function(){
+		
+    	var dir = $(this).data('dir');
+		getBreadcrumb(dir);
+		getDirectory(dir, localStorage.FtpID);
+  	});
+	
+	// Populate FTP accounts on Load
+	$.ajax({
+		url: 'assets/includes/userFunctions.php?action=getFTP&userID='+ userID,
+		dataType: 'jsonp',
+		jsonp: 'jsoncallback',
+		timeout: 15000,
+		error: function(){},
+		cache: false,
+		success: function(data, status){
+			var classy=''
+			var html='';
+			if(data[0] != 'None'){
+				for(var i=0;i<data.length;i++){
+					classy='';
+					if(i==0){
+						classy=' active';
+						$('#ftp-title').html(data[i].Name);
+					}
+					html += '<li><a href="javascript:void(0);" class="switch'+classy+'" data-ftp="'+data[i].ID+'">'+data[i].Name+'</a></li>';
+				}
+			}
+			
+			//Update the Markup
+			$('#ftp-menu').html(html);
+			
+		}
+	
+	});
+	
+	$('body').on('click', '.switch', function(){
+		$('.switch.active').removeClass('active');
+		var ftp = $(this).data('ftp');
+		$(this).addClass('active');
+		
+		$('#ftp-title').html($(this).html());
+		// Switch the current active FTP Account
+		switchFTP(ftp);
+	});
+	
+	$('body').on('click', '.download', function(){
+		var fileName = $(this).data('file-name');
+		var filePath = $(this).data('file-path');
+		
+		downloadFile(filePath, fileName);
+	});
+	
+});
+  
+/** Function to get a diectory by name
+
+	@parameter dir - string, name of directory
+	Prints out markup on Sucess
+	
+**/
+function getDirectory(dir, ftp){
+	
+	$('div.content').addClass('loading');
+	var html = '';
+	if(dir != '/'){	
+		html  += getParent(dir);
+	}
+
+	// Send FTP ID and USer ID, if they match, connect and GET! :)
+	
+  $.ajax({
+	url: 'assets/includes/getDirectories.php?dir='+ dir + '&ftp=' + ftp + '&userID=' + localStorage.UserID,
+	dataType: 'jsonp',
+	jsonp: 'jsoncallback',
+	timeout: 15000,
+	error: function(){
+
+		html = 'Sorry, could not connect to your FTP Server at this time :(';
+		$('.list').html(html);
+	},
+	cache: false,
+	success: function(data, status){
+		var directory = data;
+		
+		if(directory.connect == 'true'){
+			// Set the FTP Direectory ID
+			localStorage.FtpID = directory.FTP;
+			
+			var dirs = directory.result
+			if(dirs != undefined){
+				// Loop through all the direectories and files!
+				for(var i=0;i<dirs.length;i++){
+					if(dirs[i].type == 'file'){
+						//html += "<li><i class='fa fa-file-o'></i> <a href='javascript:void(0);' class='file' data-ext='"+dirs[i].ext+"'>"+ dirs[i].name+"</a></li><br />";
+						html += "<li class='file' data-ext='"+dirs[i].ext+"'><i class='fa fa-file-o'></i> <a href='javascript:void(0);' class='download' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"'>"+ dirs[i].name+" <i class='fa fa-download'></i></a></li>";
+							
+					} else {
+						html += "<li><i class='fa fa-folder'></i><a href='javascript:void(0);' class='directory' data-dir='"+ dirs[i].dir+"'>"+dirs[i].name+"</a></li>";
+					}
+					
+				}
+			}else{
+				html = "<li>This Folder is Empty!</li>";
+			}
+		} else {
+			html = directory.msg;
+		}
+		//Update Markup
+		$('.list').html(html);
+		//Remove loader classes
+		$('div.content').removeClass('loading');
+		
+	}
+});
+  
+}
+/** Function to return a hyper link of the parent directory
+	
+	@variable dir - string, the current working diretory
+	return - hyperlink
+	
+**/
+function getParent(dir){
+
+	var arr = dir.split('/'); // Create an array of folders
+	arr.pop(); //Remove the last folder, and save it
+	var linkage = '/'; // The actual file path of the parent
+	
+	//Loop through remaining folders and create a link
+	if(arr.length>1){
+		for(var i=0;i<arr.length;i++){
+			if(i == 0){
+				linkage = '';
+			} else {
+				linkage += '/'+arr[i];
+			}
+		}
+	}
+	var parent = '/'+arr.pop(); //Remove the last folder, and save it
+	// Set the Back to Home link
+	return "<li><i class='fa fa-folder-open'></i> <a href='javascript:void(0);' class='directory'  data-dir='"+linkage+"'>Back to "+ parent+"</a></li><br />";
+}
+
+/** Function to return a breadcrumb
+	
+	@variable dir - string, the current working diretory
+	
+	return - HTML Breadcrumb
+	
+**/
+function getBreadcrumb(dir){
+	
+	var breadcrumb='';
+	var current='';
+	var linkage='';
+	var arr = dir.split('/'); // Create an array of folders
+	console.log(arr[1]);
+	
+	if(arr[1] != ''){
+		for(var i=0;i<arr.length;i++){
+			if(i==0){
+				current="Home";
+				linkage='/';
+			} else {
+				current=arr[i];
+				if(i==1){
+					linkage += arr[i];
+				} else {
+					linkage += '/'+arr[i];
+				}
+			}
+			// Last Item, dont link it
+			if((i+1)==arr.length){
+				breadcrumb += "<li><i class='fa fa-folder-open'></i> "+ current+"</li>";
+				
+			} else {
+				breadcrumb += "<li><i class='fa fa-folder-open'></i> <a href='javascript:void(0);' class='directory'  data-dir='"+linkage+"'>"+ current+"</a> <i class='fa fa-angle-double-right'></i></li>";
+			}
+		}
+		
+	} else {
+		breadcrumb += "<li><i class='fa fa-folder-open'></i> Home <i class='fa fa-angle-double-right'></i></li>";
+	}
+	$('#breadcrumb').html(breadcrumb);
+	
+}
+
+/** Function to switch current active FTP account
+	
+	@variable - ftpID, integer, the ID of the FTP account in the Database
+**/
+
+function switchFTP(ftp){
+	
+	//Set localStorage Data to remember working FTP Account
+	localStorage.FtpID = ftp;
+	getDirectory('/', ftp);
+	getBreadcrumb('/');
+}
+
+/** Function to trigger a download of the file displayed
+	
+	@variable filePath, string
+	@variable fileName, string
+	
+**/
+
+function downloadFile(filePath, fileName){
+	
+	$.ajax({
+	url: 'assets/includes/getDirectories.php?check=download&dir='+ filePath + '&fileName=' + fileName+ '&userID=' + localStorage.UserID,
+	dataType: 'jsonp',
+	type: 'POST',
+	data:{'sessionID': localStorage.SessionID},
+	jsonp: 'jsoncallback',
+	timeout: 15000,
+	error: function(){},
+	cache: false,
+	success: function(data, status){
+		
+		if(data.result == 'success'){
+			location.href = data.url;	
+		} else {
+			$('#download-msg').html("Error: Could not download file at this time!").show();
+		}
+	}
+	});
+	
+}
+
+
+
+
+</script>
+
+  </body>
+</html>
