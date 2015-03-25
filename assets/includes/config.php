@@ -1,8 +1,8 @@
 <?php
-$server = 'mysql.doksend.com';
-$username = 'drivevirtual';
-$password = 'Sausage5!';
-$database = 'drivevirtual';
+$server = '';
+$username = '';
+$password = '';
+$database = '';
 
 header('Access-Control-Allow-Origin: *');
 
