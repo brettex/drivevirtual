@@ -1,6 +1,12 @@
 <?php
 // include FTP class 
 include_once("SFTP/SFTP.php");
+
+// Set Include Path for SSH-SFTP Library
+set_include_path(get_include_path() . PATH_SEPARATOR . 'assets/phpseclib/');
+// Additional Class to allow Secure FTP Connections
+include('phpseclib/Net/SFTP.php');
+
  
 // include Config Parameters
 include_once("config.php");
@@ -9,7 +15,8 @@ include_once("config.php");
 $directory = '/';
 if(isset($_GET['dir']))$directory = $_GET['dir']; 
 if(isset($_GET['check']))$check = $_GET['check']; 
-if(isset($_GET['ftp']))$ftp = $_GET['ftp']; 
+if(isset($_GET['ftp']))$ftp = $_GET['ftp'];
+if(isset($_GET['sftp']))$sftp = $_GET['sftp']; // True or False 
 if(isset($_GET['userID']))$userID = $_GET['userID'];
 if(isset($_POST['sessionID']))$sessionID = $_POST['sessionID'];
 if(isset($_GET['FTPUser']))$user = $_GET['FTPUser'];
@@ -114,7 +121,7 @@ if($check == 'true'){
 		
 	
 	} else { 
-			  // connection failed, display last error 
+			// connection failed, display last error 
 			// print "Connection failed: " . $ftp->error; 
 			$connected = false;
 	}
@@ -126,12 +133,9 @@ if($check == 'true'){
 				$name  = explode('/', $dir); // Remove File path from name
 				$name = end($name);
 			if($name != '/.' && $name != '/..' && $name != '..' && $name != '.'){
-				// If its a file name, remove the slash
-				// NEED to fix this to better detect file vs folder!!  
-				// Can I use is_file() or is_directory() ??
-				if(strpos($name, '.') && $name != '.' && $name != '..' && !strpos($name, '.com')){
-					//$dir = substr($dir, 1); // Only remove 1st one!!
-					// Make Downloadable?
+				//Is it a file or directory
+				if(!$ftp->cd($dir)){
+					//Set up the return data
 					$data[$i]['dir'] = $dir;
 					$data[$i]['type'] = "file";
 					$data[$i]['name'] = $name;
@@ -139,8 +143,7 @@ if($check == 'true'){
 					$ext = explode('.', $dir);
 					$data[$i]['ext'] = end($ext);	
 				} else {
-					//$dir = substr($dir, 1);
-					// Make Clickable
+
 					$data[$i]['dir'] = $dir;
 					$data[$i]['type'] = "folder";
 					$data[$i]['name'] = $name;
