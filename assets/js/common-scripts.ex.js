@@ -275,12 +275,12 @@ function retrievePassword(){
 	@variable - string, password
 	
 **/
-function checkFTP(host, user, pass){
+function checkFTP(host, user, pass, port){
 
 	var html = 'Sorry, could not connect to your FTP using current credantials';
 	
   $.ajax({
-	url: 'assets/includes/getDirectories.php?check=true&Host='+ host + '&FTPUser=' + user,
+	url: 'assets/includes/getDirectories.php?check=true&Host='+ host + '&FTPUser=' + user + '&port=' + port,
 	dataType: 'jsonp',
 	jsonp: 'jsoncallback',
 	type:'POST',

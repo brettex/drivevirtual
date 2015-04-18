@@ -147,6 +147,23 @@
                                   <input type="text" class="form-control" id="password" required>
                               </div>
                           </div>
+                          <div class="form-group">
+                          	<label class="col-sm-2 col-sm-2 control-label" for="port">Port</label>
+                            <div class="col-sm-10">
+                                <div class="radio">
+                                  <label>
+                                    <input type="radio" name="port" id="FTP" value="21" checked>
+                                   Regular FTP (21)
+                                  </label>
+                                </div>
+                                <div class="radio">
+                                  <label>
+                                    <input type="radio" name="port" id="SFTP" value="22">
+                                    Secure FTP (22)
+                                  </label>
+                                </div>
+                            </div>
+                          </div>
                           <button class="btn btn-theme" type="button" id="test">Test</button>
                           <button class="btn btn-theme" type="button" id="register" disabled="">Save</button>
                       </form>
@@ -181,8 +198,9 @@ $(document).ready(function(){
 		var host = $('#host').val();
 		var user = $('#username').val();
 		var password = $('#password').val();
+		var port = $('input[name="port"]:checked').val();
 		
-		checkFTP(host, user, password);
+		checkFTP(host, user, password, port);
 	});
 	
 	$('#register').on('click', function(e){
@@ -195,8 +213,9 @@ $(document).ready(function(){
 			var user = $('#username').val();
 			var password = $('#password').val();
 			var email = $('#email').val();
+			var port = $('input[name="port"]:checked').val();
 			
-			addNew(host, user, password, email, company);
+			addNew(host, user, password, email, company, port);
 	}
 		
 	});
@@ -211,12 +230,12 @@ $(document).ready(function(){
 	@variable - string, email
 	
 **/
-function addNew(host, user, pass, email, company){
+function addNew(host, user, pass, email, company, port){
 
 	var html = 'Sorry, could not register user at this time.';
 	
   $.ajax({
-	url: 'assets/includes/userFunctions.php?action=addNew&Host='+ host + '&FTPUser=' + user + '&email=' + email + '&company=' + company,
+	url: 'assets/includes/userFunctions.php?action=addNew&Host='+ host + '&FTPUser=' + user + '&email=' + email + '&company=' + company + '&port=' +port,
 	dataType: 'jsonp',
 	jsonp: 'jsoncallback',
 	type:'POST',

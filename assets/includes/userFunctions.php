@@ -17,6 +17,7 @@ if(isset($_GET['email']))$Email = $_GET['email'];
 if(isset($_GET['company']))$Company = $_GET['company'];
 if(isset($_GET['sessionID']))$sessionID = $_GET['sessionID'];
 if(isset($_POST['password']))$password = $_POST['password'];
+if(isset($_GET['port']))$port = $_GET['port'];
 
 
 //Register the New User Account
@@ -25,7 +26,7 @@ if($action == 'addNew'){
 	$query = $mysqli->query("INSERT INTO Users (`FirstName`, `Email`, `Username`, `Password`, `UserLevel` ) VALUES ('$Company', '$Email', '$Username','$password', 2)");
 	$userID = $mysqli->insert_id;
 	// Add them to the FTP table
-$queryFTP = $mysqli->query("INSERT INTO `FTP Accounts` ( UserID, `FTPHost`, `FTPUser`, `FTPPassword`, `FTPPort` ) VALUES ('$userID', '$Host', '$Username', '$password', 21)");
+$queryFTP = $mysqli->query("INSERT INTO `FTP Accounts` ( UserID, `FTPHost`, `FTPUser`, `FTPPassword`, `FTPPort` ) VALUES ('$userID', '$Host', '$Username', '$password', '$port')");
 	// Add them to the UserSession table
 	$querySessions = $mysqli->query("INSERT INTO UserSessions ( UserID, `SessionID` ) VALUES ('$userID', '0')");
 	
@@ -108,8 +109,10 @@ if($action == 'getUser'){
 		$result['company'] = $data['FirstName'];
 		$result['username'] = $data['Username'];
 		$result['host'] = $data['FTPHost'];
+		$result['username'] = $data['FTPUser'];
 		$result['password'] = $data['Password'];
 		$result['email'] = $data['Email'];
+		$result['port'] = $data['FTPPort'];
 	} else {
 		$result['result'] = 'NO results found!';
 	}
