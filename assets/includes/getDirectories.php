@@ -65,8 +65,8 @@ if($check == 'true'){
 		}
 	//Connect with Regular FTP	
 	if($port == 21){
-	// set SFTP object, use host, username and password 
-	$ftp = new SFTP($host, $user, $pass); 
+		// set SFTP object, use host, username and password 
+		$ftp = new SFTP($host, $user, $pass); 
 		
 		//Remove file name from directory
 		$directory = str_replace($fileName, '', $directory);
@@ -92,6 +92,30 @@ if($check == 'true'){
 		}
 	}elseif($port == 22){
 		//Connect with Secure FTP
+		$sftp = new Net_SFTP($host);
+		
+		//Remove file name from directory
+		$directory = str_replace($fileName, '', $directory);
+		//Check the connection
+		if($sftp->login($user, $pass)) {
+			//Go to correct directory
+			$curDirectory = $sftp->pwd();
+			
+			//Check user directory on Drive Virtual exists, if not, create it!
+			if(!is_dir('../../downloads/'.$userID)){
+				mkdir('../../downloads/'.$userID, 0755);
+			}
+			//Check to get the file 
+			if($sftp->get($fileName, '../../downloads/'.$userID.'/'.$fileName)) { 
+					$result['result'] = 'success';
+			  } else { 
+					$result['result'] = 'fail';
+			  }
+		
+			$result['result'] = 'success';
+		} else {
+			$result['result'] = 'fail';
+		}
 	}
 	$result['url'] = 'downloads/file.php?file='.$userID.'/'.$fileName.'&sessionID='.$sessionID;
 } else {
@@ -143,6 +167,20 @@ if($check == 'true'){
 				// print "Connection failed: " . $ftp->error; 
 				$connected = false;
 		}
+	} elseif($port == 22){
+		
+		//Connect with Secure FTP
+		$sftp = new Net_SFTP($host);
+		if (!$sftp->login($user, $pass)) {
+			$connected = false;
+		} else {
+			$connected  = true;
+		}
+		//Get the Current Directory
+		$curDirectory = $sftp->pwd();
+		$directories = $sftp->nlist($curDirectory); 
+		
+	}
 		
 		if($connected){
 			$typeArray = array();
@@ -151,8 +189,21 @@ if($check == 'true'){
 					$name  = explode('/', $dir); // Remove File path from name
 					$name = end($name);
 				if($name != '/.' && $name != '/..' && $name != '..' && $name != '.'){
+					if($port == 21){
+						$isFile = false;
+						if(!$ftp->cd($dir)){
+							$isFile = true;
+						}
+					} else {
+						$isFile = true;	
+						//Get some info on file/directory
+						$info = $sftp->stat($dir);
+						if($info['type'] == 2){
+							$isFile = false;	
+						}
+					}
 					//Is it a file or directory
-					if(!$ftp->cd($dir)){
+					if($isFile){
 						//Set up the return data
 						$data[$i]['dir'] = $dir;
 						$data[$i]['type'] = "file";
@@ -189,9 +240,6 @@ if($check == 'true'){
 			$sortedData['connect'] = 'false';
 			$result['msg'] = 'Could not connect to the FTP Server at this time.';
 		}
-	} elseif($port == 22){
-		
-	}
 }
 	
 	// Encode the Results

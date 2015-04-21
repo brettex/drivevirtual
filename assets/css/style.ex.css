@@ -2268,6 +2268,45 @@ label {
 	padding: 5px 0;
 }
 
+/**** Folder File Types ****/
+.file:before{
+	font-family:"FontAwesome";
+	content:"\f016";
+}
+/* Code Base */
+.file[data-ext="html"]:before,
+.file[data-ext="htm"]:before,
+.file[data-ext="php"]:before,
+.file[data-ext="asp"]:before,
+.file[data-ext="aspx"]:before
+{content: "\f1c9";}
+
+/** PDF **/
+.file[data-ext="pdf"]:before{content:'\f1c1';}
+
+/** Word Docs **/
+.file[data-ext="doc"]:before,
+.file[data-ext="docx"]:before{content:'\f1c2';}
+
+/** Excel Docs **/
+.file[data-ext="xls"]:before,
+.file[data-ext="xlsx"]:before,
+.file[data-ext="csv"]:before{content:'\f1c3';}
+
+/** Zip Docs **/
+.file[data-ext="zip"]:before,
+.file[data-ext="7z"]:before,
+.file[data-ext="tar"]:before,
+.file[data-ext="gz"]:before{content:'\f1c6';}
+
+/** Images **/
+.file[data-ext="jpg"]:before,
+.file[data-ext="jpeg"]:before,
+.file[data-ext="png"]:before,
+.file[data-ext="tiff"]:before,
+.file[data-ext="svg"]:before,
+.file[data-ext="gif"]:before{content:'\f1c5';}
+
 #folder-list li i{
     padding-right:5px;
 }
