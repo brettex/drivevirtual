@@ -2278,7 +2278,9 @@ label {
 .file[data-ext="htm"]:before,
 .file[data-ext="php"]:before,
 .file[data-ext="asp"]:before,
-.file[data-ext="aspx"]:before
+.file[data-ext="aspx"]:before,
+.file[data-ext="css"]:before,
+.file[data-ext="js"]:before
 {content: "\f1c9";}
 
 /** PDF **/

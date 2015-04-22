@@ -176,9 +176,13 @@ if($check == 'true'){
 		} else {
 			$connected  = true;
 		}
+		//Change the current Directory
+		$sftp->chdir($directory);
 		//Get the Current Directory
-		$curDirectory = $sftp->pwd();
+		$curDirectory = $sftp->_realpath();
+		//echo $curDirectory;
 		$directories = $sftp->nlist($curDirectory); 
+		//print_r($directories);
 		
 	}
 		
@@ -186,6 +190,8 @@ if($check == 'true'){
 			$typeArray = array();
 			$i=0;
 			foreach($directories as $dir){
+					//SFTP returns ONLY current path, not directory path, so add it!
+					if($port == 22){ $dir  = $curDirectory."/".$dir;}
 					$name  = explode('/', $dir); // Remove File path from name
 					$name = end($name);
 				if($name != '/.' && $name != '/..' && $name != '..' && $name != '.'){
