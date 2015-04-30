@@ -413,8 +413,8 @@ ul.sidebar-menu li a.active i {
 }
 
 .black-bg {
-    background: #ffd777;
-    border-bottom: 1px solid #c9aa5f;
+    background: #222;
+    border-bottom:1px solid #48B1DF;
 }
 
 .wrapper {
@@ -2243,7 +2243,7 @@ label {
 
 /***** DRIVE VIRTUAL OVERRIDES *****/
 .header{
-	background:#404040;
+	background:#222;
 }
 
 #breadcrumb {
