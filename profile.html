@@ -18,6 +18,8 @@
     <!-- Custom styles for this template -->
     <link href="assets/css/style.css" rel="stylesheet">
     <link href="assets/css/style-responsive.css" rel="stylesheet">
+    
+    <link href="assets/img/favicon.ico" rel="shortcut icon">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -92,36 +94,37 @@
           	<div class="row mt">
           		<div class="col-lg-12">
                   <div class="form-panel">
-                  	  <h4 class="mb"><i class="fa fa-angle-right"></i> Below are your account fields. They are not ediable.</h4>
+                  	  <h4 class="mb"><i class="fa fa-angle-right"></i> Below are your account fields.</h4>
+                      <div class="alert alert-danger" id="login-msg"></div>
                       <form class="form-horizontal style-form" method="get">
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label" for="company1">Company Name</label>
                               <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="company1" readonly>
+                                  <input type="text" class="form-control" id="company1">
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label" for="email">Email</label>
                               <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="email" readonly>
+                                  <input type="text" class="form-control" id="email">
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label" for="username">FTP Username</label>
                               <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="username" readonly>
+                                  <input type="text" class="form-control" id="username">
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label" for="host">FTP Host</label>
                               <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="host" readonly>
+                                  <input type="text" class="form-control" id="host">
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label" for="password">FTP Password</label>
                               <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="password" readonly>
+                                  <input type="text" class="form-control" id="password">
                               </div>
                           </div>
                           <div class="form-group">
@@ -129,18 +132,20 @@
                             <div class="col-sm-10">
                                 <div class="radio">
                                   <label>
-                                    <input type="radio" name="port" id="ftp" value="21" disabled>
+                                    <input type="radio" name="port" id="ftp" value="21">
                                    Regular FTP (21)
                                   </label>
                                 </div>
                                 <div class="radio">
                                   <label>
-                                    <input type="radio" name="port" id="sftp" value="22" disabled>
+                                    <input type="radio" name="port" id="sftp" value="22">
                                     Secure FTP (22)
                                   </label>
                                 </div>
                             </div>
                           </div>
+                          <button class="btn btn-theme" type="button" id="test">Test</button>
+                          <button class="btn btn-theme" type="button" id="register" disabled="">Save</button>
                       </form>
                   </div>
           		</div><!-- col-lg-12-->      	
@@ -210,6 +215,33 @@ $(document).ready(function(){
 				$('#sftp').attr('checked', 'checked');
 			}
 		}
+	});
+	
+	$('#test').on('click', function(e){
+		e.preventDefault();
+		var host = $('#host').val();
+		var user = $('#username').val();
+		var password = $('#password').val();
+		var port = $('input[name="port"]:checked').val();
+		
+		checkFTP(host, user, password, port);
+	});
+	
+	$('#register').on('click', function(e){
+		e.preventDefault();
+		
+		var check = checkFields();
+		if(check == 0){
+			var company = $('#company1').val();
+			var host = $('#host').val();
+			var user = $('#username').val();
+			var password = $('#password').val();
+			var email = $('#email').val();
+			var port = $('input[name="port"]:checked').val();
+			
+			addNew('update', host, user, password, email, company, port);
+	}
+		
 	});
 });
 </script>

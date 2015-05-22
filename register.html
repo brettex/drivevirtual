@@ -18,6 +18,7 @@
     <!-- Custom styles for this template -->
     <link href="assets/css/style.css" rel="stylesheet">
     <link href="assets/css/style-responsive.css" rel="stylesheet">
+    <link href="assets/img/favicon.ico" rel="shortcut icon">
     
     <!-- js placed at the end of the document so the pages load faster -->
     <script src="assets/js/jquery.js"></script>
@@ -215,68 +216,11 @@ $(document).ready(function(){
 			var email = $('#email').val();
 			var port = $('input[name="port"]:checked').val();
 			
-			addNew(host, user, password, email, company, port);
+			addNew('addNew', host, user, password, email, company, port);
 	}
 		
 	});
-});
-
-/** Function to Register a user
-	
-	@variable - string, company
-	@variable - string, host
-	@variable - string, user
-	@variable - string, password
-	@variable - string, email
-	
-**/
-function addNew(host, user, pass, email, company, port){
-
-	var html = 'Sorry, could not register user at this time.';
-	
-  $.ajax({
-	url: 'assets/includes/userFunctions.php?action=addNew&Host='+ host + '&FTPUser=' + user + '&email=' + email + '&company=' + company + '&port=' +port,
-	dataType: 'jsonp',
-	jsonp: 'jsoncallback',
-	type:'POST',
-	data:{'password': pass },
-	timeout: 15000,
-	error: function(){
-
-		$('.alert').addClass('alert-danger').html(html);
-	},
-	cache: false,
-	success: function(data, status){
-		if(data.msg){
-			html = 'User Succesfully Registered!';
-			$('.alert').removeClass('alert-danger').html(html);
-			$('#register').removeAttr('disabled');
-		} else {
-			$('.alert').addClass('alert-danger').html(html);
-		}
-	}
-	
-  });
-}
-
-function checkFields(){
-	
-		var error = 0;
-		var val ='';
-		
-		$('input[type="text"]').each( function(){
-			
-			val = $(this).val();
-			if(val.length == 0){
-				error = 1;
-				$(this).parents('.form-group').addClass('has-error');
-			} else {
-				$(this).parents('.form-group').removeClass('has-error');	
-			}
-		});
-		
-		return error;
-}
+})
 </script>
 
   </body>

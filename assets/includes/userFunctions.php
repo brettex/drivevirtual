@@ -40,6 +40,23 @@ $queryFTP = $mysqli->query("INSERT INTO `FTP Accounts` ( UserID, `FTPHost`, `FTP
 	$result['msg'] = true;
 }
 
+//Update User Account
+if($action == 'update'){
+	if(isset($_POST['userid'])){
+		
+		$userID = $_POST['userid'];
+		// Update the User table
+		$query = $mysqli->query("UPDATE Users SET `FirstName` = '$Company', `Email`='$Email', `Username`='$Username', `Password`='$password' WHERE ID = '$userID'");
+	
+		// Update the FTP table
+		$queryFTP = $mysqli->query("UPDATE `FTP Accounts` SET `FTPHost`='$Host', `FTPUser`='$Username', `FTPPassword`='$password', `FTPPort`='$port' WHERE UserID = '$userID'");
+
+		$result['msg'] = true;
+	} else {
+		$result['msg'] = false;
+	}
+}
+
 
 // Get All the users FTP Accounts
 if($action == 'getFTP'){

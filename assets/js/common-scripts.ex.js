@@ -312,3 +312,69 @@ function populateCompanyName(){
 	
 	$('#company').html(company);	
 }
+
+/** Function to Register a user
+	
+	@variable - string, company
+	@variable - string, host
+	@variable - string, user
+	@variable - string, password
+	@variable - string, email
+	
+**/
+function addNew(action, host, user, pass, email, company, port){
+	var html='', id ='';
+	if(action == "new"){
+		html = 'Sorry, could not register user at this time.';
+	} else {
+		html = 'Sorry, your profile could not be updated at this time.';
+		id = localStorage.UserID;
+	}
+	
+  $.ajax({
+	url: 'assets/includes/userFunctions.php?action=' + action + '&Host='+ host + '&FTPUser=' + user + '&email=' + email + '&company=' + company + '&port=' +port,
+	dataType: 'jsonp',
+	jsonp: 'jsoncallback',
+	type:'POST',
+	data:{'password': pass, 'userid': id },
+	timeout: 15000,
+	error: function(){
+
+		$('.alert').addClass('alert-danger').html(html);
+	},
+	cache: false,
+	success: function(data, status){
+		if(data.msg){
+			if(action == 'new'){
+				html = 'User Succesfully Registered!';
+			} else {
+				html = 'User Succesfully Updated!';
+			}
+			$('.alert').removeClass('alert-danger').html(html);
+			$('#register').removeAttr('disabled');
+		} else {
+			$('.alert').addClass('alert-danger').html(html);
+		}
+	}
+	
+  });
+}
+
+function checkFields(){
+	
+		var error = 0;
+		var val ='';
+		
+		$('input[type="text"]').each( function(){
+			
+			val = $(this).val();
+			if(val.length == 0){
+				error = 1;
+				$(this).parents('.form-group').addClass('has-error');
+			} else {
+				$(this).parents('.form-group').removeClass('has-error');	
+			}
+		});
+		
+		return error;
+}
