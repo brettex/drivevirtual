@@ -80,8 +80,9 @@ if($check == 'true'){
 				mkdir('../../downloads/'.$userID, 0755);
 			}
 			//Check to get the file 
-			if($ftp->get($fileName, '../../downloads/'.$userID.'/'.$fileName)) { 
+			if($ftp->get($fileName, '../../downloads/'.$userID.'/'.$fileName, FTP_BINARY)) { 
 					$result['result'] = 'success';
+					$result['mime'] = mime_content_types('../../downloads/'.$userID.'/'.$fileName);
 			  } else { 
 					$result['result'] = 'fail';
 			  }
@@ -108,6 +109,7 @@ if($check == 'true'){
 			//Check to get the file 
 			if($sftp->get($fileName, '../../downloads/'.$userID.'/'.$fileName)) { 
 					$result['result'] = 'success';
+					$result['mime'] = mime_content_types('../../downloads/'.$userID.'/'.$fileName);
 			  } else { 
 					$result['result'] = 'fail';
 			  }
@@ -251,6 +253,85 @@ if($check == 'true'){
 	// Encode the Results
 echo $_GET['jsoncallback'] . '(' . json_encode($result) . ');';
 
+
+	/** FUNCTION TO SET CORRECT MIME TYPE **/	
+
+    function mime_content_types($filename) {
+
+        $mime_types = array(
+
+            'txt' => 'text/plain',
+            'htm' => 'text/plain',
+            'html' => 'text/plain',
+            'php' => 'text/plain',
+			'x-php' => 'text/plain',
+            'css' => 'text/plain',
+            'js' => 'text/plain',
+            'json' => 'text/plain',
+            'xml' => 'text/plain',
+            'swf' => 'application/x-shockwave-flash',
+            'flv' => 'video/x-flv',
+
+            // images
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+
+            // archives
+            'zip' => 'no/preview',
+            'rar' => 'no/preview',
+            'exe' => 'no/preview',
+            'msi' => 'no/preview',
+            'cab' => 'no/preview',
+
+            // audio/video
+            'mp3' => 'audio/mpeg',
+            'qt' => 'video/quicktime',
+            'mov' => 'video/quicktime',
+			'wav' => 'video/wav-file',
+			'wma' => 'no/preview',
+
+            // adobe
+            'pdf' => 'application/pdf',
+            'psd' => 'no/preview',
+            'ai' => 'no/preview',
+            'eps' => 'no/preview',
+            'ps' => 'no/preview',
+
+            // ms office
+            'doc' => 'text/html',
+            'rtf' => 'text/html',
+            'xls' => 'text/html',
+			'xlsx' => 'text/html',
+            'ppt' => 'no/preview',
+
+            // open office
+            'odt' => 'text/html',
+            'ods' => 'text/html',
+        );
+
+        $ext = strtolower(array_pop(explode('.',$filename)));
+        if (array_key_exists($ext, $mime_types)) {
+            return $mime_types[$ext];
+        }
+        /*elseif (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mimetype = finfo_file($finfo, $filename);
+            finfo_close($finfo);
+            return $mimetype;
+        } */
+        else {
+            return 'no/preview';
+        }
+    }
 ?>
     
     

@@ -34,6 +34,9 @@
     <script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
     <script src="assets/js/jquery.scrollTo.min.js"></script>
     <script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+    
+    <link rel="stylesheet" href="assets/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+	<script type="text/javascript" src="assets/fancybox/jquery.fancybox.js"></script>
 
 
 
@@ -156,6 +159,17 @@
   
 $(document).ready(function(){
 	
+	/* Initialize Fancy Box */
+	$("body").on('click', '.preview', function() {
+		//Download file first
+		var fileName = $(this).data('file-name');
+		var filePath = $(this).data('file-path');
+		var url = downloadFile(filePath, fileName, true);
+		//&dir='+ filePath + '&fileName=' + fileName+ '&userID=' + localStorage.UserID, 
+		//Open a iFrame with dynamic content 
+
+	});
+	
 	populateCompanyName(); 
 	
 	var userID = localStorage.UserID;
@@ -218,7 +232,7 @@ $(document).ready(function(){
 		var fileName = $(this).data('file-name');
 		var filePath = $(this).data('file-path');
 		
-		downloadFile(filePath, fileName);
+		downloadFile(filePath, fileName, false);
 	});
 	
 });
@@ -263,7 +277,8 @@ function getDirectory(dir, ftp){
 				for(var i=0;i<dirs.length;i++){
 					if(dirs[i].type == 'file'){
 						//html += "<li><i class='fa fa-file-o'></i> <a href='javascript:void(0);' class='file' data-ext='"+dirs[i].ext+"'>"+ dirs[i].name+"</a></li><br />";
-						html += "<li class='file' data-ext='"+dirs[i].ext+"'> <a href='javascript:void(0);' class='download' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"'>"+ dirs[i].name+" <i class='fa fa-download'></i></a></li>";
+						html += "<li class='file' data-ext='"+dirs[i].ext+"'> <a href='javascript:void(0);' class='download' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"' title='Download'>"+ dirs[i].name+" <i class='fa fa-download'></i></a>";
+						html += "<a href='javascript:void(0);' class='preview' title='Preview' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"'><i class='fa fa-external-link-square'></i></a></li>";
 							
 					} else {
 						html += "<li><i class='fa fa-folder'></i><a href='javascript:void(0);' class='directory' data-dir='"+ dirs[i].dir+"'>"+dirs[i].name+"</a></li>";
@@ -376,7 +391,7 @@ function switchFTP(ftp){
 	
 **/
 
-function downloadFile(filePath, fileName){
+function downloadFile(filePath, fileName, preview){
 	
 	$.ajax({
 	url: 'assets/includes/getDirectories.php?check=download&dir='+ filePath + '&fileName=' + fileName+ '&userID=' + localStorage.UserID,
@@ -388,11 +403,22 @@ function downloadFile(filePath, fileName){
 	error: function(){},
 	cache: false,
 	success: function(data, status){
-		
-		if(data.result == 'success'){
-			location.href = data.url;	
+		if(preview){
+		console.log(data.url);
+		$.fancybox.open({
+			href : data.url+'&preview=true&mime='+data.mime,
+			type : 'iframe',
+			padding : 5
+		});
 		} else {
-			$('#download-msg').html("Error: Could not download file at this time!").show();
+				
+			if(data.result == 'success'){
+				var url = encodeURI(data.url);
+				console.log(url);
+				location.href = url;	
+			} else {
+				$('#download-msg').html("Error: Could not download file at this time!").show();
+			}
 		}
 	}
 	});
