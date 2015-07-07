@@ -408,7 +408,10 @@ function downloadFile(filePath, fileName, preview){
 		$.fancybox.open({
 			href : data.url+'&preview=true&mime='+data.mime,
 			type : 'iframe',
-			padding : 5
+			padding : 5,
+			afterClose: function(){
+				deleteFile(data.url);
+			}
 		});
 		} else {
 				
@@ -421,6 +424,30 @@ function downloadFile(filePath, fileName, preview){
 			}
 		}
 	}
+	});
+	
+}
+
+/** 
+
+Function to delete a file
+
+@parameter - file - string
+
+**/
+function deleteFile(file){
+	
+	$.ajax({
+	url: file+'&delete=true',
+	dataType: 'jsonp',
+	type: 'GET',
+	jsonp: 'jsoncallback',
+	timeout: 15000,
+	error: function(){},
+	cache: false,
+	success: function(data, status){
+		console.log('File Deleted!');
+		}
 	});
 	
 }

@@ -10,73 +10,77 @@ error_reporting(E_ALL);
 	if(isset($_GET['file']))$filePath= $_GET['file'];
 	if(isset($_GET['preview'])){$preview = $_GET['preview'];} else{ $preview = 'false';}
 	if(isset($_GET['mime'])){$mime = $_GET['mime'];} else{ $mime = 'application/stream';}
-
-	//Extract UserID from File Path
-	$userID = dirname($filePath);
 	
-	//Get session ID from Database
-	$query = $mysqli->query("SELECT * FROM UserSessions s LEFT JOIN Users u ON s.UserID = u.ID WHERE s.UserID = '$userID' AND `SessionID` = '$sessionID'");
-	
-	//Only Allow download if user is Authenticated
-	if($query->num_rows > 0){
-	
-		if(file_exists($filePath)) {
-			$fileName = basename($filePath);
-			$fileSize = filesize($filePath);
-			
-			//$ext = strtolower(array_pop(explode('.',$fileName)));
-			
-			$types = array('application/pdf', 'application/plain', 'application/x-shockwave-flash', 'video/x-flv');
-			
-			$noPreview = array('application/zip', 'video/wav-file', 'video/quicktime', 'no/preview');
-	
-			// Output headers.
-			if($preview == 'true'){
-				
-				if(in_array($mime, $types)){
-					header("Location:".$filePath);
-					//Delete file for Security purposes
-					//unlink($filePath);
-				}
-				//header("Content-Disposition: inline; filename=".$fileName);
-				if(in_array($mime, $noPreview)){
-					header("Content-Type: text/html");
-				} else  {
-					header("Content-Type: ".$mime);
-				}
-				header("Cache-Control: private");		
-				header("Content-Length: ".$fileSize);
-				
-				if(in_array($mime, $noPreview)){
-					$contents = "<div style='font-family:Arial;background:url(../assets/img/logo.png) center 15px no-repeat transparent;text-align:center;font-weight:bold;padding-top:100px;color:#666;'>Sorry, there is no preview availible for this file type :( </div>";
-				} else {
-					$contents = file_get_contents($filePath);
-				}
-				echo $contents;
-			} else {
-				$contentType = 'application/stream';
-				header("Content-Disposition: attachment; filename=".str_replace(' ', '-', $fileName));
-				header("Content-Type: ".$contentType);
-				header("Cache-Control: private");		
-				header("Content-Length: ".$fileSize);
-				
-				//Ignore if te user cancels download
-				ignore_user_abort(true);
-				// Output file.
-				readfile ($filePath);
-				//Delete file for Security purposes
-				unlink($filePath); 
-			}                  
-			exit();
-		}
-		else {  
-			die('File doesent exist!');
-    	}
-		
-		
+	if(isset($_GET['delete'])){
+		unlink($filePath); 
 	} else {
+		//Extract UserID from File Path
+		$userID = dirname($filePath);
 		
-		die('Not Authorized!');
+		//Get session ID from Database
+		$query = $mysqli->query("SELECT * FROM UserSessions s LEFT JOIN Users u ON s.UserID = u.ID WHERE s.UserID = '$userID' AND `SessionID` = '$sessionID'");
+		
+		//Only Allow download if user is Authenticated
+		if($query->num_rows > 0){
+		
+			if(file_exists($filePath)) {
+				$fileName = basename($filePath);
+				$fileSize = filesize($filePath);
+				
+				//$ext = strtolower(array_pop(explode('.',$fileName)));
+				
+				$types = array('application/pdf', 'application/plain', 'application/x-shockwave-flash', 'video/x-flv');
+				
+				$noPreview = array('application/zip', 'video/wav-file', 'video/quicktime', 'no/preview');
+		
+				// Output headers.
+				if($preview == 'true'){
+					
+					if(in_array($mime, $types)){
+						header("Location:".$filePath);
+						//Delete file for Security purposes
+						//unlink($filePath);
+					}
+					//header("Content-Disposition: inline; filename=".$fileName);
+					if(in_array($mime, $noPreview)){
+						header("Content-Type: text/html");
+					} else  {
+						header("Content-Type: ".$mime);
+					}
+					header("Cache-Control: private");		
+					header("Content-Length: ".$fileSize);
+					
+					if(in_array($mime, $noPreview)){
+						$contents = "<div style='font-family:Arial;background:url(../assets/img/logo.png) center 15px no-repeat transparent;text-align:center;font-weight:bold;padding-top:100px;color:#666;'>Sorry, there is no preview availible for this file type :( </div>";
+					} else {
+						$contents = file_get_contents($filePath);
+					}
+					echo $contents;
+				} else {
+					$contentType = 'application/stream';
+					header("Content-Disposition: attachment; filename=".str_replace(' ', '-', $fileName));
+					header("Content-Type: ".$contentType);
+					header("Cache-Control: private");		
+					header("Content-Length: ".$fileSize);
+					
+					//Ignore if te user cancels download
+					ignore_user_abort(true);
+					// Output file.
+					readfile ($filePath);
+					//Delete file for Security purposes
+					unlink($filePath); 
+				}                  
+				exit();
+			}
+			else {  
+				die('File doesent exist!');
+			}
+			
+			
+		} else {
+			
+			die('Not Authorized!');
+		}
 	}
 	
 	/** FUNCTION TO SET CORRECT MIME TYPE **/	
