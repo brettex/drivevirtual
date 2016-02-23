@@ -297,7 +297,6 @@ echo $_GET['jsoncallback'] . '(' . json_encode($result) . ');';
             'qt' => 'video/quicktime',
             'mov' => 'video/quicktime',
 			'wav' => 'video/wav-file',
-			'wma' => 'no/preview',
 
             // adobe
             'pdf' => 'application/pdf',
