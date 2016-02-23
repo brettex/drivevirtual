@@ -296,6 +296,42 @@ final class SFTP {
 			return false;
 		}
 	}
+    
+    /**
+	 * Get File Modification Time
+	 *
+	 * @param string $remote_file_path
+	 * @param int $mode
+	 * @return bool
+	 */
+	public function getMod($remote_file = null, $mode = FTP_ASCII) {
+		// attempt to upload file
+		if(ftp_mdtm($this->_stream, $remote_file) != -1) {
+			// success
+			return ftp_mdtm($this->_stream, $remote_file);
+		// upload failed
+		} else {
+			return false;
+		}
+	}
+    
+    /**
+	 * Get File Size
+	 *
+	 * @param string $remote_file_path
+	 * @param int $mode
+	 * @return bool
+	 */
+	public function getSize($remote_file = null, $mode = FTP_ASCII) {
+		// attempt to upload file
+		if(ftp_size($this->_stream, $remote_file) != -1) {
+			// success
+			return ftp_size($this->_stream, $remote_file);
+		// upload failed
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Get current directory

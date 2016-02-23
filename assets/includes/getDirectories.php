@@ -218,9 +218,18 @@ if($check == 'true'){
 						$data[$i]['name'] = $name;
 						// Get file Extension
 						$ext = explode('.', $dir);
-						$data[$i]['ext'] = end($ext);	
+						$data[$i]['ext'] = end($ext);
+                        //Get File Size and Modification time
+                        if($sftp){
+                            $size = $sftp->filesize($dir);
+                            $modified = $sftp->filemtime($dir);
+                        } else {
+                            $size = $ftp->getSize($dir);
+                            $modified = $ftp->getMod($dir);
+                        }
+                        $data[$i]['size'] = human_filesize($size, 0);
+                        $data[$i]['mod'] = date("F d Y H:i:s", $modified);	
 					} else {
-	
 						$data[$i]['dir'] = $dir;
 						$data[$i]['type'] = "folder";
 						$data[$i]['name'] = $name;
@@ -238,7 +247,11 @@ if($check == 'true'){
 				$sortedData['result'][$i]['dir'] = $data[$key]['dir']; // Directory Path
 				$sortedData['result'][$i]['name'] = $data[$key]['name']; //Name
 				$sortedData['result'][$i]['type'] = $type; //Type, i.e Filer or Folder
-				if($type == 'file') $sortedData['result'][$i]['ext'] = $data[$key]['ext'];  //Extension
+				if($type == 'file') {
+                    $sortedData['result'][$i]['ext'] = $data[$key]['ext'];  //Extension
+                    $sortedData['result'][$i]['size'] = $data[$key]['size'];
+                    $sortedData['result'][$i]['mod'] = $data[$key]['mod'];
+                }
 				$i++;	
 			}
 			$sortedData['connect'] = 'true';
@@ -331,6 +344,21 @@ echo $_GET['jsoncallback'] . '(' . json_encode($result) . ');';
             return 'no/preview';
         }
     }
+    
+/** 
+    Function to Convert byte file size string in to a more Human Readable one
+    
+    @parameter $bytes - integer
+    @parameter $decimals, integer
+    
+**/
+
+    
+function human_filesize($bytes, $decimals = 2) {
+    $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];    
+}
 ?>
     
     

@@ -27,9 +27,9 @@
     <![endif]-->
     
         <!-- js placed at the end of the document so the pages load faster -->
-        <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.js"></script>
     <script src="assets/js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>   
     <script src="assets/js/jquery.ui.touch-punch.min.js"></script>
     <script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
     <script src="assets/js/jquery.scrollTo.min.js"></script>
@@ -46,6 +46,9 @@
     <!--script for this page-->
     
   <script>
+  /*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap ***/
+    $.widget.bridge('uibutton', $.ui.button);
+    $.widget.bridge('uitooltip', $.ui.tooltip);
   // See if they are logged in
   checkLogin(false);
   </script>
@@ -169,7 +172,15 @@ $(document).ready(function(){
 		//Open a iFrame with dynamic content 
 
 	});
-	
+    
+    /* Initalaize Bootstrap Tip */
+	$('body').tooltip({
+		delay: { "show": 400, "hide": 200 },
+		trigger: 'hover',
+		selector: 'li.file',
+        placement: 'right',
+        html: true
+	});
 	populateCompanyName(); 
 	
 	var userID = localStorage.UserID;
@@ -277,7 +288,7 @@ function getDirectory(dir, ftp){
 				for(var i=0;i<dirs.length;i++){
 					if(dirs[i].type == 'file'){
 						//html += "<li><i class='fa fa-file-o'></i> <a href='javascript:void(0);' class='file' data-ext='"+dirs[i].ext+"'>"+ dirs[i].name+"</a></li><br />";
-						html += "<li class='file' data-ext='"+dirs[i].ext+"'> <a href='javascript:void(0);' class='download' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"' title='Download'>"+ dirs[i].name+" <i class='fa fa-download'></i></a>";
+						html += "<li class='file' data-ext='"+dirs[i].ext+"' title='Size: "+dirs[i].size+"<br />Modified: "+dirs[i].mod+"'> "+ dirs[i].name+" <a href='javascript:void(0);' class='download' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"' title='Download'> <i class='fa fa-download'></i></a>";
 						html += "<a href='javascript:void(0);' class='preview' title='Preview' data-file-path='"+dirs[i].dir+"' data-file-name='"+dirs[i].name+"'><i class='fa fa-external-link-square'></i></a></li>";
 							
 					} else {
